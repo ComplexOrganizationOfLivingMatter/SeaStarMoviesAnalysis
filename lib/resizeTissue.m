@@ -7,9 +7,12 @@ if exist(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'file') == 0
     load(fullfile(files(numFile).folder, 'Results', '3d_layers_info.mat'))%, 'labelledImage_realSize', 'lumenImage_realSize');
     
     labelledImage_realSize  = imresize3(correctLabelledImage, [1024 1024 zScale*size(correctLabelledImage,3)], 'nearest');
-
-    basalLayer = getBasalFrom3DImage(labelledImage_realSize, labelledImage_realSize == 0);
-    apicalLayer = getBasalFrom3DImage(lumenImage_realSize, labelledImage_realSize == 0);
+     [x,y,z] = ind2sub(size(labelledImage_realSize),find(labelledImage_realSize>0));
+     pixelLocations = [x, y, z];
+     for numCell=1:max(max(max(labelledImage_realSize)))
+     [labelledImage_realSize] = smoothObject(labelledImage_realSize,pixelLocations, numCell);
+     end 
+    [basalLayer,apicalLayer] = getApicalAndBasalFrom3DImage(labelledImage_realSize);
     
     layers3d=[{apicalLayer},{basalLayer}];
     
@@ -41,7 +44,7 @@ if exist(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'file') == 0
         end
         
     end
-    save(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'labelledImage_realSize','lumenImage_realSize','apicalLayer','basalLayer', '-v7.3');
+    save(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'labelledImage_realSize','apicalLayer','basalLayer', '-v7.3');
     
 else
     load(fullfile(files(numFile).folder, 'realSize3dLayers.mat'))
