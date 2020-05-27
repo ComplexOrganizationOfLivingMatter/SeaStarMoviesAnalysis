@@ -7,13 +7,10 @@ if exist(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'file') == 0
     load(fullfile(files(numFile).folder, 'Results', '3d_layers_info.mat'))%, 'labelledImage_realSize', 'lumenImage_realSize');
     
     labelledImage_realSize  = imresize3(correctLabelledImage, [1024 1024 zScale*size(correctLabelledImage,3)], 'nearest');
-     [x,y,z] = ind2sub(size(labelledImage_realSize),find(labelledImage_realSize>0));
-     pixelLocations = [x, y, z];
-     for numCell=1:max(max(max(labelledImage_realSize)))
-     [labelledImage_realSize] = smoothObject(labelledImage_realSize,pixelLocations, numCell);
-     end 
-    [basalLayer,apicalLayer] = getApicalAndBasalFrom3DImage(labelledImage_realSize);
-    
+
+    zDirection = 1:size(labelledImage_realSize,3);
+    [basalLayer] = getLayerFrom3DImage(labelledImage_realSize,zDirection);
+    [apicalLayer] = getLayerFrom3DImage(labelledImage_realSize,fliplr(zDirection));
     layers3d=[{apicalLayer},{basalLayer}];
     
     %% Step 2: Getting the perimeter of the basal and apical layers of the image with its real size
