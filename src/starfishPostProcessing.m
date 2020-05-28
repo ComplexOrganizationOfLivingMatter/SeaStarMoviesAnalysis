@@ -1,4 +1,4 @@
-function [cellularFeatures] = starfishPostProcessing(files, numFile)
+function [cellularFeatures, surfaceRatio3D] = starfishPostProcessing(files, numFile)
 %PIPELINE Summary of this function goes here
 %   Detailed explanation goes here
 if exist(fullfile(files(numFile).folder, 'Results', 'cellularFeaturesExcel.mat'), 'file') == 0
@@ -84,15 +84,40 @@ end
 [basalLayer,apicalLayer,labelledImage_realSize]=resizeTissue(numFile,files);
 
 
-validCells=1:max(max(max(labelledImage)));
+validCells=1:max(max(max(labelledImage_realSize)));
 noValidCells = [];
-outputDir=files(numFiles.folder);
+outputDir=files(numFile).folder;
+
+[apical3dInfo] = calculateNeighbours3D(apicalLayer, 2, apicalLayer == 0);
+apical3dInfo = apical3dInfo.neighbourhood';
+
+[basal3dInfo] = calculateNeighbours3D(basalLayer, 2, basalLayer == 0);
+basal3dInfo = basal3dInfo.neighbourhood';
+
+if length(apical3dInfo) > length(basal3dInfo)
+    basal3dInfo(length(apical3dInfo)) = {[]};
+elseif length(apical3dInfo) < length(basal3dInfo)
+    apical3dInfo(length(basal3dInfo)) = {[]};
+end
+
+
 
  [cellularFeatures] = calculate_CellularFeatures(apical3dInfo,basal3dInfo,apicalLayer,basalLayer,labelledImage_realSize,noValidCells,validCells,outputDir);
     
- save(fullfile(outputDir, 'Results', 'cellularFeaturesExcel.mat'), 'cellularFeatures'); 
+%% Surface ratio 3D
+apicalLayer_onlyValidCells = ismember(apicalLayer, validCells) .* apicalLayer;
+apical_area_cells3D = cell2mat(struct2cell(regionprops(apicalLayer_onlyValidCells,'Area'))).';
+apical_area_cells3D = apical_area_cells3D(validCells);
+
+basalLayer_onlyValidCells = ismember(basalLayer, validCells) .* basalLayer;
+basal_area_cells3D = cell2mat(struct2cell(regionprops(basalLayer_onlyValidCells,'Area'))).';
+basal_area_cells3D = basal_area_cells3D(validCells);
+
+surfaceRatio3D = sum(ismember(basalLayer(:), validCells)) / sum(ismember(apicalLayer(:), validCells));
+
+ save(fullfile(outputDir, 'Results', 'cellularFeaturesExcel.mat'), 'cellularFeatures', 'surfaceRatio3D'); 
 else
-    load(fullfile(files(numFile).folder, 'Results', 'cellularFeaturesExcel.mat'), 'cellularFeatures'); 
+    load(fullfile(files(numFile).folder, 'Results', 'cellularFeaturesExcel.mat'), 'cellularFeatures', 'surfaceRatio3D'); 
 end
 
     

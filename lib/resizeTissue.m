@@ -1,6 +1,6 @@
 function [basalLayer,apicalLayer,labelledImage_realSize]=resizeTissue(numFile,files)
 
-if exist(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'file') == 0
+if exist(fullfile(files(numFile).folder, 'Results', 'realSize3dLayers.mat'), 'file') == 0
     
     %% Step 1: Creating image with its real size
     load(fullfile(files(numFile).folder, 'Results', 'zScaleOfTissue.mat'))
@@ -10,7 +10,9 @@ if exist(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'file') == 0
 
     zDirection = 1:size(labelledImage_realSize,3);
     [basalLayer] = getLayerFrom3DImage(labelledImage_realSize,zDirection);
+%     basalLayer=imopen(basalLayer,strel('disk',6));
     [apicalLayer] = getLayerFrom3DImage(labelledImage_realSize,fliplr(zDirection));
+%     apicalLayer=imopen(apicalLayer,strel('disk',6));
     layers3d=[{apicalLayer},{basalLayer}];
     
     %% Step 2: Getting the perimeter of the basal and apical layers of the image with its real size
@@ -41,10 +43,10 @@ if exist(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'file') == 0
         end
         
     end
-    save(fullfile(files(numFile).folder, 'realSize3dLayers.mat'), 'labelledImage_realSize','apicalLayer','basalLayer', '-v7.3');
+    save(fullfile(files(numFile).folder, 'Results', 'realSize3dLayers.mat'), 'labelledImage_realSize','apicalLayer','basalLayer', '-v7.3');
     
 else
-    load(fullfile(files(numFile).folder, 'realSize3dLayers.mat'))
+    load(fullfile(files(numFile).folder,'Results', 'realSize3dLayers.mat'))
 end
 
 end

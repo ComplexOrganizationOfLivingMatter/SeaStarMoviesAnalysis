@@ -1,4 +1,4 @@
-function [meanFeatures,stdFeatures] = calculate_CellularFeatures(apical3dInfo,basal3dInfo,apicalLayer,basalLayer,labelledImage,noValidCells,validCells,outputDir, total_neighbours3D)
+function [CellularFeatures] = calculate_CellularFeatures(apical3dInfo,basal3dInfo,apicalLayer,basalLayer,labelledImage,noValidCells,validCells,outputDir, total_neighbours3D)
 %CALCULATE_CELLULARFEATURES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -52,10 +52,10 @@ neighbours_data.Properties.VariableNames = {'Apical','Basal'};
 polygon_distribution.Properties.VariableNames = {'Apical','Basal'};
 
 %%  Calculate number of neighbours of each cell
-if exist('total_neighbours3D', 'var') == 0
-    total_neighbours3D = calculateNeighbours3D(labelledImage, 2);
-    total_neighbours3D = checkPairPointCloudDistanceCurateNeighbours(labelledImage, total_neighbours3D.neighbourhood', 1);
-end
+% if exist('total_neighbours3D', 'var') == 0
+%     total_neighbours3D = calculateNeighbours3D(labelledImage, 2);
+%     total_neighbours3D = checkPairPointCloudDistanceCurateNeighbours(labelledImage, total_neighbours3D.neighbourhood', 1);
+% end
 if length(apical3dInfo) > length(basal3dInfo)
     basal3dInfo(length(apical3dInfo)) = {[]};
 elseif length(apical3dInfo) < length(basal3dInfo)
@@ -65,10 +65,10 @@ number_neighbours = table(cellfun(@length,(apical3dInfo)),cellfun(@length,(basal
 apicobasal_neighbours=cellfun(@(x,y)(unique(vertcat(x,y))), apical3dInfo, basal3dInfo, 'UniformOutput',false);
 
 
-if length(total_neighbours3D) < length(apicobasal_neighbours)
-    total_neighbours3D(length(apicobasal_neighbours)) = {[]};
-end
-total_neighbours3DRecount=cellfun(@(x) length(x), total_neighbours3D, 'UniformOutput',false);
+% if length(total_neighbours3D) < length(apicobasal_neighbours)
+%     total_neighbours3D(length(apicobasal_neighbours)) = {[]};
+% end
+% total_neighbours3DRecount=cellfun(@(x) length(x), total_neighbours3D, 'UniformOutput',false);
 apicobasal_neighboursRecount=cellfun(@(x) length(x),apicobasal_neighbours,'UniformOutput',false);
 
 %%  Calculate area cells
@@ -94,8 +94,8 @@ apicoBasalTransitions = cellfun(@(x, y) length(unique(vertcat(setdiff(x, y), set
 
 %%  Export to a excel file
 ID_cells=(1:length(basal3dInfo)).';
-CellularFeatures=table(ID_cells,number_neighbours.Var1',number_neighbours.Var2',total_neighbours3DRecount',apicobasal_neighboursRecount',scutoids_cells', apicoBasalTransitions', apical_area_cells,basal_area_cells, surfaceRatio, volume_cells);
-CellularFeatures.Properties.VariableNames = {'ID_Cell','Apical_sides','Basal_sides','Total_neighbours','Apicobasal_neighbours','Scutoids', 'apicoBasalTransitions', 'Apical_area','Basal_area', 'Surface_Ratio','Volume'};
+CellularFeatures=table(ID_cells,number_neighbours.Var1',number_neighbours.Var2',apicobasal_neighboursRecount',scutoids_cells', apicoBasalTransitions', apical_area_cells,basal_area_cells, surfaceRatio, volume_cells);
+CellularFeatures.Properties.VariableNames = {'ID_Cell','Apical_sides','Basal_sides','Apicobasal_neighbours','Scutoids', 'apicoBasalTransitions', 'Apical_area','Basal_area', 'Surface_Ratio','Volume'};
 CellularFeaturesWithNoValidCells = CellularFeatures;
 
 cellsPixels = regionprops3(labelledImage, 'Volume');
