@@ -11,28 +11,39 @@ spotsStatistics = readtable('..\..\..\20200114_miniata_rasGFP_H2BRFP_32cellsToha
 voxelDepth = 1.1501322;
 PixelWidth = 0.1863522;
 
-
 tracksWithNaNs = unique(str2double(spotsStatistics.TRACK_ID)');
 tracksWithNaNs(isnan(tracksWithNaNs)) = [];
+
+cellsInfo = {};
+newIdCell = 1;
+numberOfCellsPerFrame = 1;
 for numCell = tracksWithNaNs
     selectedCellTrajectory = cellfun(@(x) isequal(x, num2str(numCell)), spotsStatistics.TRACK_ID);
 
     currentCellTrack = spotsStatistics(selectedCellTrajectory, :);
 
-    currentPoint = currentCellTrack(1, :);
-    selectedZ = round(currentPoint.POSITION_Z / voxelDepth);
-    for numSpot = 1:size(currentCellTrack, 1)
+    %Unique frames
+    allFramesAtCurrentCell = unique(currentCellTrack.FRAME)';
+    
+    %Info per cell: ID_Track ID_Cell ID_Daughter_1 ID_Daughter_2 Frames Centroid_X Centroid_Y Centroid_Z Centroid_XCorrected Centroid_YCorrected Centroid_ZCorrected
+    newCell = [numCell newIdCell -1 -1 allFramesAtCurrentCell(1) currentCellTrack.POSITION_X(1) currentCellTrack.POSITION_Y(1) currentCellTrack.POSITION_Z(1) ...
+        round(currentCellTrack.POSITION_X(1)/PixelWidth) round(currentCellTrack.POSITION_Y(1)/PixelWidth) round(currentCellTrack.POSITION_Z(1)/voxelDepth)];
+    for numFrame = 2:length(allFramesAtCurrentCell)
+        
+        currentCellTrackPerFrame = currentCellTrack(currentCellTrack.FRAME == allFramesAtCurrentCell(numFrame), :);
+        newDivisions = size(currentCellTrackPerFrame, 1) - numberOfCellsPerFrame;
+        
+        for numSpot = 1:size(currentCellTrackPerFrame, 1)
+            currentPoint = currentCellTrackPerFrame(numSpot, :);
+            
+            %Look for closest cell
+            pdist2(
+            
+                
+           
+            selectedZ = round(currentPoint.POSITION_Z / voxelDepth);
 
-        currentPoint = currentCellTrack(numSpot, :);
-        if currentFrame ~= currentPoint.FRAME
-            hold off;
-            imshow(imadjust(image4D{selectedZ, currentPoint.FRAME+1}));
-            hold on;
         end
-
-        plot(round(currentPoint.POSITION_X/PixelWidth), round(currentPoint.POSITION_Y/PixelWidth), 'rx')
-
-
-        currentFrame = currentPoint.FRAME;
+        numberOfCellsPerFrame = size(currentCellTrackPerFrame, 1);
     end
 end
