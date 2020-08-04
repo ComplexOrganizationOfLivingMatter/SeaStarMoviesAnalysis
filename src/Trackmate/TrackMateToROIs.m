@@ -31,9 +31,7 @@ for numCell = tracksWithNaNs
     for numFrame = 2:length(allFramesAtCurrentCell)
         newCellsPastFrame = newCells(newCells(:, 4) == numFrame - 1, :);
         
-        currentCellTrackPerFrame = currentCellTrack(currentCellTrack.FRAME == allFramesAtCurrentCell(numFrame), :);
-        newDivisions = size(currentCellTrackPerFrame, 1) - numberOfCellsPerFrame;
-        
+        currentCellTrackPerFrame = currentCellTrack(currentCellTrack.FRAME == allFramesAtCurrentCell(numFrame), :);        
         newCellsCurrentFrame = [];
         for numSpot = 1:size(currentCellTrackPerFrame, 1)
             currentPoint = currentCellTrackPerFrame(numSpot, :);
@@ -47,10 +45,43 @@ for numCell = tracksWithNaNs
         uniqueIds = unique(newCellsCurrentFrame(:, 2));
         [numberOfOccurrences, matching] = histc(newCellsCurrentFrame(:, 2), uniqueIds);
         idOcurrences = uniqueIds(numberOfOccurrences>1);
+        missingCells = setdiff(newCellsPastFrame(:, 2), uniqueIds);
+        missingCellsPast = [];
         
+        if ~isempty(missingCells) && ~isempty(idOcurrences)
+            while ~isempty(missingCells) && ~isequal(missingCells, missingCellsPast)
+                for changeId = idOcurrences'
+                    [distances, closestId] = pdist2(newCellsCurrentFrame(newCellsCurrentFrame(:, 2) == changeId, 7), newCellsPastFrame(newCellsPastFrame(:, 2) == changeId, 7), 'euclidean', 'Smallest', 1);
+                    cellsToChange = find(newCellsCurrentFrame(:, 2) == changeId);
+                    cellsToChange(closestId) = [];
+                    newCellsCurrentFrame(cellsToChange, 2) = missingCells(1);
+                    newCellsCurrentFrame(cellsToChange, 3) = newCellsPastFrame(missingCells(1) == newCellsPastFrame(:, 2), 3);
+                end
+                
+                uniqueIds = unique(newCellsCurrentFrame(:, 2));
+                [numberOfOccurrences, matching] = histc(newCellsCurrentFrame(:, 2), uniqueIds);
+                idOcurrences = uniqueIds(numberOfOccurrences>1);
+                missingCellsPast = missingCells;
+                missingCells = setdiff(newCellsPastFrame(:, 2), uniqueIds);
+            end
+            
+            if length(missingCells) > 1
+                disp('More than one missing cell');
+                break
+            end
+            newCellsCurrentFrame;
+        end
+        
+        uniqueIds = unique(newCellsCurrentFrame(:, 2));
+        [numberOfOccurrences, matching] = histc(newCellsCurrentFrame(:, 2), uniqueIds);
+        idOcurrences = uniqueIds(numberOfOccurrences>1);
+        missingCells = setdiff(newCellsPastFrame(:, 2), uniqueIds);
+        if ~isempty(missingCells) && any(numberOfOccurrences > 1)
+            disp('Missing cell not fixed');
+        end
         %Was there a division in the previous frame? If so, there was a
         %division
-        if newDivisions > 0
+        if any(numberOfOccurrences > 1)
             if any(numberOfOccurrences > 2)
                 disp('Crazy things just happenned. Please consider split your 4D image');
                 break
@@ -64,21 +95,8 @@ for numCell = tracksWithNaNs
                 newIdCell = newIdCell + 1;
                 newCellsCurrentFrame(daughterCells(2), 2:3) = [newIdCell fatherCell];
             end
-        elseif length(uniqueIds) < size(newCellsCurrentFrame, 1) %% Missing cell
-            missingCells = setdiff(newCellsPastFrame(:, 2), uniqueIds);
-            if length(missingCells) > 1
-                disp('More than one missing cell');
-                break
-            end
-            for changeId = idOcurrences'
-                [distances, closestId] = pdist2(newCellsCurrentFrame(newCellsCurrentFrame(:, 2) == changeId, 7), newCellsPastFrame(newCellsPastFrame(:, 2) == changeId, 7), 'euclidean', 'Smallest', 1);
-                cellsToChange = find(newCellsCurrentFrame(:, 2) == changeId);
-                cellsToChange(closestId) = [];
-                newCellsCurrentFrame(cellsToChange, 2) = missingCells(1);
-            end
-            newCellsCurrentFrame;
         end
-        
+
         newCells = [newCells; newCellsCurrentFrame];
         
         numberOfCellsPerFrame = size(currentCellTrackPerFrame, 1);
