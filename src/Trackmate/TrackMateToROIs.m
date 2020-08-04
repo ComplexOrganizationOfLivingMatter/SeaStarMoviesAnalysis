@@ -25,33 +25,64 @@ for numCell = tracksWithNaNs
     %Unique frames
     allFramesAtCurrentCell = unique(currentCellTrack.FRAME)';
     
-    %Info per cell: ID_Track ID_Cell ID_Daughter_1 ID_Daughter_2 Frame Centroid_X Centroid_Y Centroid_Z Centroid_XCorrected Centroid_YCorrected Centroid_ZCorrected
-    newCell = [numCell newIdCell -1 -1 allFramesAtCurrentCell(1)+1 currentCellTrack.POSITION_X(1) currentCellTrack.POSITION_Y(1) currentCellTrack.POSITION_Z(1) ...
+    %Info per cell: ID_Track ID_Cell Father Frame Centroid_X Centroid_Y Centroid_Z Centroid_XCorrected Centroid_YCorrected Centroid_ZCorrected
+    newCells = [numCell newIdCell -1 allFramesAtCurrentCell(1)+1 currentCellTrack.POSITION_X(1) currentCellTrack.POSITION_Y(1) currentCellTrack.POSITION_Z(1) ...
         round(currentCellTrack.POSITION_X(1)/PixelWidth) round(currentCellTrack.POSITION_Y(1)/PixelWidth) round(currentCellTrack.POSITION_Z(1)/voxelDepth)];
     for numFrame = 2:length(allFramesAtCurrentCell)
-        newCellsPastFrame = newCell(newCell(:, 5) == numFrame - 1, :);
-        %Was there a division in the previous frame? If so, there was a
-        %division
-        if length(unique(newCellsPastFrame(:, 2))) > size(newCellsPastFrame, 1)
-            [a,b] = histc(x,unique(x));
-            y = a(b);
-            newIdCell = newIdCell + 1;
-            
-        end
+        newCellsPastFrame = newCells(newCells(:, 4) == numFrame - 1, :);
         
         currentCellTrackPerFrame = currentCellTrack(currentCellTrack.FRAME == allFramesAtCurrentCell(numFrame), :);
         newDivisions = size(currentCellTrackPerFrame, 1) - numberOfCellsPerFrame;
         
-        
+        newCellsCurrentFrame = [];
         for numSpot = 1:size(currentCellTrackPerFrame, 1)
             currentPoint = currentCellTrackPerFrame(numSpot, :);
             
             %Look for closest cell
-            [~, closestCell] = pdist2([currentPoint.POSITION_X currentPoint.POSITION_Y currentPoint.POSITION_Z], newCellsPastFrame(:, 6:8), 'euclidean', 'Smallest', 1);
-            newCell(end+1, :) = [newCellsPastFrame(closestCell, 1:4) numFrame currentPoint.POSITION_X(1) currentPoint.POSITION_Y(1) currentPoint.POSITION_Z(1) ...
+            [~, closestCell] = pdist2(newCellsPastFrame(:, 5:7), [currentPoint.POSITION_X currentPoint.POSITION_Y currentPoint.POSITION_Z], 'euclidean', 'Smallest', 1);
+            newCellsCurrentFrame(end+1, :) = [newCellsPastFrame(closestCell, 1:3) numFrame currentPoint.POSITION_X(1) currentPoint.POSITION_Y(1) currentPoint.POSITION_Z(1) ...
                 round(currentPoint.POSITION_X(1)/PixelWidth) round(currentPoint.POSITION_Y(1)/PixelWidth) round(currentPoint.POSITION_Z(1)/voxelDepth)];
         end
         
+        uniqueIds = unique(newCellsCurrentFrame(:, 2));
+        [numberOfOccurrences, matching] = histc(newCellsCurrentFrame(:, 2), uniqueIds);
+        idOcurrences = uniqueIds(numberOfOccurrences>1);
+        
+        %Was there a division in the previous frame? If so, there was a
+        %division
+        if newDivisions > 0
+            if any(numberOfOccurrences > 2)
+                disp('Crazy things just happenned. Please consider split your 4D image');
+                break
+            end
+            for changeId = idOcurrences'
+                daughterCells = find(newCellsCurrentFrame(:, 2) == changeId);
+                newIdCell = newIdCell + 1;
+                fatherCell = newCellsCurrentFrame(daughterCells(1), 2);
+                newCellsCurrentFrame(daughterCells(1), 2:3) = [newIdCell fatherCell];
+
+                newIdCell = newIdCell + 1;
+                newCellsCurrentFrame(daughterCells(2), 2:3) = [newIdCell fatherCell];
+            end
+        elseif length(uniqueIds) < size(newCellsCurrentFrame, 1) %% Missing cell
+            missingCells = setdiff(newCellsPastFrame(:, 2), uniqueIds);
+            if length(missingCells) > 1
+                disp('More than one missing cell');
+                break
+            end
+            for changeId = idOcurrences'
+                [distances, closestId] = pdist2(newCellsCurrentFrame(newCellsCurrentFrame(:, 2) == changeId, 7), newCellsPastFrame(newCellsPastFrame(:, 2) == changeId, 7), 'euclidean', 'Smallest', 1);
+                cellsToChange = find(newCellsCurrentFrame(:, 2) == changeId);
+                cellsToChange(closestId) = [];
+                newCellsCurrentFrame(cellsToChange, 2) = missingCells(1);
+            end
+            newCellsCurrentFrame;
+        end
+        
+        newCells = [newCells; newCellsCurrentFrame];
+        
         numberOfCellsPerFrame = size(currentCellTrackPerFrame, 1);
     end
+    newIdCell = newIdCell + 1;
+    cellsInfo(numCell+1) = {newCells};
 end
