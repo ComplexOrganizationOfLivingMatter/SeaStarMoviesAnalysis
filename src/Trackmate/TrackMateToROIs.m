@@ -28,10 +28,10 @@ for numCell = tracksWithNaNs
     %Info per cell: ID_Track ID_Cell Father Frame Centroid_X Centroid_Y Centroid_Z Centroid_XCorrected Centroid_YCorrected Centroid_ZCorrected
     newCells = [numCell newIdCell -1 allFramesAtCurrentCell(1)+1 currentCellTrack.POSITION_X(1) currentCellTrack.POSITION_Y(1) currentCellTrack.POSITION_Z(1) ...
         round(currentCellTrack.POSITION_X(1)/PixelWidth) round(currentCellTrack.POSITION_Y(1)/PixelWidth) round(currentCellTrack.POSITION_Z(1)/voxelDepth)];
-    for numFrame = 2:length(allFramesAtCurrentCell)
+    for numFrame = allFramesAtCurrentCell(2:end)+1
         newCellsPastFrame = newCells(newCells(:, 4) == numFrame - 1, :);
         
-        currentCellTrackPerFrame = currentCellTrack(currentCellTrack.FRAME == allFramesAtCurrentCell(numFrame), :);        
+        currentCellTrackPerFrame = currentCellTrack(currentCellTrack.FRAME == (numFrame - 1), :);        
         newCellsCurrentFrame = [];
         for numSpot = 1:size(currentCellTrackPerFrame, 1)
             currentPoint = currentCellTrackPerFrame(numSpot, :);
