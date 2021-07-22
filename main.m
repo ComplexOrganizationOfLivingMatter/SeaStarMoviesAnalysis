@@ -6,12 +6,14 @@ embryoDataFiles = dir('data/*.mat');
 
 for indexFiles=1: length(embryoDataFiles)
     
-[allNumberMotives,allNumberMotivesNormalized,allTimeIntervals,allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives,percentageMiniataMotives] = extractEquinodermsData(embryoDataFiles(indexFiles,1));
+[allNumberMotives,allNumberMotivesNormalized,allTimeIntervals,allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives,percentageMiniataMotives,allTopologyMotives,allTemporalDistributionMotives] = extractEquinodermsData(embryoDataFiles(indexFiles,1));
 
-embryoDataFiles(indexFiles,1).data={allNumberMotivesNormalized,allTimeIntervals,percentageMiniataMotives,allNumberMotives;allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives};
+embryoDataFiles(indexFiles,1).intercalations = {allNumberMotivesNormalized,allTimeIntervals,percentageMiniataMotives,allNumberMotives;allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives};
+embryoDataFiles(indexFiles,1).topology = allTopologyMotives;
+embryoDataFiles(indexFiles,1).distribution = allTemporalDistributionMotives;
+embryoDataFiles(indexFiles,1).mitosis=
 
-    
 end
 
 
-[tableStatsTimeIntervals,tableStatsIntercalations] = compareDataEmbryo(embryoDataFiles);
+[tableStatsTimeIntervals,tableStatsIntercalations,tableStatsTopology] = compareDataEmbryo(embryoDataFiles);
