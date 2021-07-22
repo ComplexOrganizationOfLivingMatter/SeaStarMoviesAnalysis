@@ -1,37 +1,17 @@
+clear all
+addpath('lib/Statistics');
+addpath('src');
 
-addpath(genpath('src'))
-addpath(genpath('lib'))
+embryoDataFiles = dir('data/*.mat');
 
-close all
-
-    if contains('T_*', '\data\')
-        files = dir(fullfile('T_*'));
-    else
-        files = dir(fullfile('**/data/', 'T_*', '*.tif'));
-    end
+for indexFiles=1: length(embryoDataFiles)
     
-nonDiscardedFiles = cellfun(@(x) contains(lower(x), 'discarded') == 0, {files.folder});
-files = files(nonDiscardedFiles);
+[allNumberMotives,allNumberMotivesNormalized,allTimeIntervals,allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives,percentageMiniataMotives] = extractEquinodermsData(embryoDataFiles(indexFiles,1));
 
-totalMeanFeatures = cell([length(files) 18]);
-totalStdFeatures = cell([length(files) 18]);
-allGeneralInfo = cell(length(files), 4);
+embryoDataFiles(indexFiles,1).data={allNumberMotivesNormalized,allTimeIntervals,percentageMiniataMotives,allNumberMotives;allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives};
 
-selpath = dir('**/data/');
-
-    for numFile=1:length(files)
-        [cellularFeatures, surfaceRatio3D] = starfishPostProcessing(files, numFile);
-         meanFeatures = varfun(@(x) mean(x),cellularFeatures(:, 2:end));
-         stdFeatures = varfun(@(x) std(x),cellularFeatures(:, 2:end));
-
-        [meanFeatures,stdFeatures] = convertPixelsToMicrons(files,numFile,meanFeatures,stdFeatures);
-         totalMeanFeatures(numFile, :) = table2cell(meanFeatures);
-         totalStdFeatures(numFile, :) = table2cell(stdFeatures);
-         allGeneralInfo(numFile, :) = [{fileName}, {surfaceRatio3D}, {numCells}];
-    end
     
-    allGeneralInfo = cell2table(allGeneralInfo, 'VariableNames', {'ID_Glands', 'SurfaceRatio3D','NCells'});
-    
-    save(fullfile(selpath(1).folder, 'global_3dFeatures.mat'), 'allGeneralInfo', 'totalMeanFeatures','totalStdFeatures');
-    writetable(finalTable, fullfile(selpath(1).folder,'global_3dFeatures.xls'),'Range','B2');
-    writetable(finalSTDTable, fullfile(selpath(1).folder,'global_3dFeatures.xls'),'Sheet', 2,'Range','B2');
+end
+
+
+[tableStatsTimeIntervals,tableStatsIntercalations] = compareDataEmbryo(embryoDataFiles);
