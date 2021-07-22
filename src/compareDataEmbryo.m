@@ -1,8 +1,8 @@
-function [tableStatsTimeIntervals,tableStatsIntercalations] = compareDataEmbryo(embryoDataFiles)
+function [tableStatsTimeIntervals,tableStatsIntercalations,tableStatsTopology ] = compareDataEmbryo(embryoDataFiles)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
 
-
+%% Intercalation classification
 tableStatsMiniatas=compareMeansOfMatrices(embryoDataFiles(2).data{1,1},embryoDataFiles(1).data{1,1});
 tableStatsMiniataCompPictus=compareMeansOfMatrices(embryoDataFiles(1).data{1,1},embryoDataFiles(3).data{1,1});
 tableStatsMiniataPictus=compareMeansOfMatrices(embryoDataFiles(2).data{1,1},embryoDataFiles(3).data{1,1});
@@ -11,6 +11,7 @@ tableStatsIntercalations= table(intercalationsName,tableStatsMiniatas{:,2},table
 
 tableStatsIntercalations.Properties.VariableNames={char("TypeOfIntercalation"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"),char("MiniataCompVsPictus")};
 
+%%% TIME STAGES 
 %% Miniata wild type Vs Miniata Comprresed
 timeMiniatasAfter=compareMeansOfMatrices(embryoDataFiles(2).data{2,1},embryoDataFiles(1).data{2,1});
 timeMiniatasBefore=compareMeansOfMatrices(embryoDataFiles(2).data{2,2},embryoDataFiles(1).data{2,2});
@@ -38,7 +39,23 @@ interphaseStageName=["PostMito" "Intercalation" "PreMito"]';
 tableStatsTimeIntervals = table(interphaseStageName,timeMiniatas,timeMiniataPictus,timeMiniataCompPictus);
 tableStatsTimeIntervals.Properties.VariableNames = {char("InterphaseStage"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"), char("MiniataCompVsPictus")};
 
-% 
-% 
+%% Topology Analysis
+topologyMiniatas = compareMeansOfMatrices(embryoDataFiles(2).topology,embryoDataFiles(3).topology);
+topologyMiniataPictus = compareMeansOfMatrices(embryoDataFiles(2).topology,embryoDataFiles(3).topology);
+topologyMiniataCompPictus = compareMeansOfMatrices(embryoDataFiles(2).topology,embryoDataFiles(3).topology);
+
+topologyName=["2 prog" "3A prog" "3B prog" "4 prog" "incomplete mitosis"]';
+
+tableStatsTopology =  table(topologyName,topologyMiniatas,topologyMiniataPictus,topologyMiniataCompPictus);
+
+%%Temporal distribution
+topologyMiniatas = compareMeansOfMatrices(embryoDataFiles(2).topology,embryoDataFiles(3).topology);
+topologyMiniataPictus = compareMeansOfMatrices(embryoDataFiles(2).topology,embryoDataFiles(3).topology);
+topologyMiniataCompPictus = compareMeansOfMatrices(embryoDataFiles(2).topology,embryoDataFiles(3).topology);
+
+topologyName=["2 prog" "3A prog" "3B prog" "4 prog" "incomplete mitosis"]';
+
+tableStatsTopology =  table(topologyName,topologyMiniatas,topologyMiniataPictus,topologyMiniataCompPictus);
+
 end
 
