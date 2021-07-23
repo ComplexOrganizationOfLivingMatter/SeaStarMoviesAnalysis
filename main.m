@@ -6,12 +6,14 @@ embryoDataFiles = dir('data/*.mat');
 
 for indexFiles=1: length(embryoDataFiles)
     
-[allNumberMotives,allNumberMotivesNormalized,allTimeIntervals,allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives,percentageMiniataMotives,allTopologyMotives,allTemporalDistributionMotives] = extractEquinodermsData(embryoDataFiles(indexFiles,1));
+[allIntercalationsData] = extractEquinodermsData(embryoDataFiles(indexFiles,1));
 
-embryoDataFiles(indexFiles,1).intercalations = {allNumberMotivesNormalized,allTimeIntervals,percentageMiniataMotives,allNumberMotives;allMiniataAfterMotives,allMiniataBeforeMotives,allMiniataInterMotives,allMiniataIndepMotives};
-embryoDataFiles(indexFiles,1).topology = allTopologyMotives;
-embryoDataFiles(indexFiles,1).distribution = allTemporalDistributionMotives;
-embryoDataFiles(indexFiles,1).mitosis=
+embryoDataFiles(indexFiles,1).intercalations = {allIntercalationsData.allNumberMotives,allIntercalationsData.afterMotives,allIntercalationsData.beforeMotives,allIntercalationsData.interMotives,allIntercalationsData.indepMotives,
+    allIntercalationsData.stdAfterMotives,allIntercalationsData.stdBeforeMotives,allIntercalationsData.stdInterMotives,allIntercalationsData.stdIndepMotives};
+% embryoDataFiles(indexFiles,1).topology = allTopologyMotives;
+embryoDataFiles(indexFiles,1).distribution = {allIntercalationsData.allNumberMotivesEachStage,allIntercalationsData.afterMotivesEachStage,allIntercalationsData.beforeMotivesEachStage,allIntercalationsData.interMotivesEachStage,allIntercalationsData.indepMotivesEachStage};
+    
+% embryoDataFiles(indexFiles,1).mitosis = allMitosisMotives;
 
 end
 
