@@ -7,11 +7,11 @@ before=typesOfMotives(2:4:end,:);
 inter=typesOfMotives(3:4:end,:);
 indep=typesOfMotives(4:4:end,:);
 
-if isnan(after(:,1))
-    after2=after;
-    after=before;
-    before=after2;
-end
+% if isnan(after(:,1))
+%     after2=after;
+%     after=before;
+%     before=after2;
+% end
 
 end
 

@@ -55,8 +55,9 @@ end
 [afterMotives,beforeMotives,interMotives,indepMotives] = splitTypesOfMotives(allTypesMotives);
 [stdAfterMotives,stdBeforeMotives,stdInterMotives,stdIndepMotives] = splitTypesOfMotives(allStdTypesMotives);
 [afterMotivesEachStage,beforeMotivesEachStage,interMotivesEachStage,indepMotivesEachStage] = splitTypesOfMotives(allTypesOfMotivesEachStage);
+allNumberMotivesNormalized = allNumberMotives./sum(allNumberMotives,2);
 
-allIntercalationsData = table(allNumberMotives, allNumberMotivesEachStage, afterMotives,beforeMotives,interMotives,indepMotives,stdAfterMotives,stdBeforeMotives,stdInterMotives,stdIndepMotives,afterMotivesEachStage,beforeMotivesEachStage,interMotivesEachStage,indepMotivesEachStage);
+allIntercalationsData = table(allNumberMotives,allNumberMotivesNormalized, allNumberMotivesEachStage, afterMotives,beforeMotives,interMotives,indepMotives,stdAfterMotives,stdBeforeMotives,stdInterMotives,stdIndepMotives,afterMotivesEachStage,beforeMotivesEachStage,interMotivesEachStage,indepMotivesEachStage);
 % allMitosisData = table(allTypesMitosis, allStdTypesOfMitosis, allNumberMitosis, allTypesOfMitosisEachStage,allNumberMitosisEachStage,allTopologyMitosis);
 
 end

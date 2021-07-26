@@ -8,14 +8,14 @@ for indexFiles=1: length(embryoDataFiles)
     
 [allIntercalationsData] = extractEquinodermsData(embryoDataFiles(indexFiles,1));
 
-embryoDataFiles(indexFiles,1).intercalations = {allIntercalationsData.allNumberMotives,allIntercalationsData.afterMotives,allIntercalationsData.beforeMotives,allIntercalationsData.interMotives,allIntercalationsData.indepMotives,
-    allIntercalationsData.stdAfterMotives,allIntercalationsData.stdBeforeMotives,allIntercalationsData.stdInterMotives,allIntercalationsData.stdIndepMotives};
+embryoDataFiles(indexFiles).intercalations = allIntercalationsData;
 % embryoDataFiles(indexFiles,1).topology = allTopologyMotives;
-embryoDataFiles(indexFiles,1).distribution = {allIntercalationsData.allNumberMotivesEachStage,allIntercalationsData.afterMotivesEachStage,allIntercalationsData.beforeMotivesEachStage,allIntercalationsData.interMotivesEachStage,allIntercalationsData.indepMotivesEachStage};
-    
 % embryoDataFiles(indexFiles,1).mitosis = allMitosisMotives;
-
+writetable(allIntercalationsData,fullfile('results', strcat(erase(embryoDataFiles(indexFiles).name,'.mat'),'_allIntercalationsData.xls')), 'Range','B2');
 end
 
 
-[tableStatsTimeIntervals,tableStatsIntercalations,tableStatsTopology] = compareDataEmbryo(embryoDataFiles);
+% writetable(CellularFeatures,fullfile(outputDir, 'results', 'all_Mitosis_Data.xls'), 'Range','B2');
+[tableStatsIntercalations,tableStatsTimeIntervals,tableStatsTemporalDist, tableStatsTemporalDistTypeMotives] = compareDataEmbryo(embryoDataFiles);
+% [tableStatsMitosis,tableStatsMitosisTimeIntervals,tableStatsMitosisTemporalDist, tableStatsTemporalDistTypeMitosis] = compareDataEmbryo(embryoDataFiles);
+
