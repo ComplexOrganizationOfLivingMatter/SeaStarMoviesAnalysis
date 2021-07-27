@@ -1,11 +1,18 @@
-function [numberMotives,numberMotivesEachStage,meanAllTypesOfMotives,stdAllTypesOfMotives,allTypesOfMotivesEachStage] = classifyMotives(embryoMovies)
+function [numberMotives,numberMotivesEachStage,meanAllTypesOfMotives,stdAllTypesOfMotives,allTypesOfMotivesEachStage,indxAfter] = classifyMotives(embryoMovies,mitosisFile)
 %   Detailed explanation goes here
 
 threshold=0.25;
-indxAfter=find(embryoMovies(:,1) <= threshold & embryoMovies(:,3) > threshold);
-indxBefore=find(embryoMovies(:,1) > threshold & embryoMovies(:,3) <= threshold);
+
+if mitosisFile==1
+    indxAfter=find((embryoMovies(:,1) > threshold | isnan(embryoMovies(:,1))) & embryoMovies(:,3) <= threshold);
+    indxBefore=find(embryoMovies(:,1) <= threshold & (embryoMovies(:,3) > threshold | isnan(embryoMovies(:,3))));
+else
+    indxAfter=find(embryoMovies(:,1) <= threshold & embryoMovies(:,3) > threshold);
+    indxBefore=find(embryoMovies(:,1) > threshold & embryoMovies(:,3) <= threshold);
+end
+
 indxAllInterphase=find(embryoMovies(:,1) <= threshold & embryoMovies(:,3) <= threshold);
-indxIndependent=find(embryoMovies(:,1) > threshold & embryoMovies(:,3) > threshold);
+indxIndependent=find((embryoMovies(:,1)  > threshold | isnan(embryoMovies(:,1))) & (embryoMovies(:,3) > threshold | isnan(embryoMovies(:,3))));
 
 meanAfterMotives=mean(embryoMovies(indxAfter,1:3),1);
 meanBeforeMotives=mean(embryoMovies(indxBefore,1:3),1);

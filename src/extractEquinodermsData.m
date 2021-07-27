@@ -1,32 +1,26 @@
-function [allIntercalationsData] = extractEquinodermsData(filename)
+function [allMotivesData] = extractEquinodermsData(filename,checkFile)
 
 load(fullfile(filename.folder, filename.name));
-intercalationFiles = whos('file','*intercalations*');
-mitosisFiles = whos('file','*mitosis*');
+    if checkFile 
+        motivesFiles = whos('file','*mitosis*');
+    else
+        motivesFiles = whos('file','*intercalations*');
+    end
 
-%% Intercalations analysis
+%% Motives analysis
 allTypesMotives=[];
 allStdTypesMotives=[];
-allNumberMotives=zeros(length(intercalationFiles),4);
+allNumberMotives=zeros(length(motivesFiles),4);
 
 allTypesOfMotivesEachStage = [];
-allNumberMotivesEachStage = zeros(length(intercalationFiles),6);
+allNumberMotivesEachStage = zeros(length(motivesFiles),6);
 
-%% Mitosis analysis
-allTypesMitosis=[];
-allStdTypesMitosis=[];
-allNumberMitosis=zeros(length(mitosisFiles),4);
+allTopologyMitosis = zeros(length(motivesFiles),5);
 
-allTypesOfMotivesEachStage = [];
-allNumberMotivesEachStage = zeros(length(mitosisFiles),6);
-
-allTopologyMitosis=zeros(length(mitosisFiles),4);
-
-for indexMovies = 1:length(intercalationFiles)
+for indexMovies = 1:length(motivesFiles)
  
-    %%Intercalations
-    fileNameIntercalations=intercalationFiles(indexMovies,1).name;
-    [numberMotives,numberMotivesEachStage,typesOfMotives,stdTypesMotives,typesOfMotivesEachStage] = classifyMotives(eval(fileNameIntercalations));
+    fileNameMotives=motivesFiles(indexMovies,1).name;
+    [numberMotives,numberMotivesEachStage,typesOfMotives,stdTypesMotives,typesOfMotivesEachStage,indxAfter] = classifyMotives(eval(fileNameMotives),checkFile);
 
     allTypesMotives = [allTypesMotives; typesOfMotives];
     allStdTypesMotives = [allStdTypesMotives; stdTypesMotives];
@@ -36,20 +30,11 @@ for indexMovies = 1:length(intercalationFiles)
     allNumberMotivesEachStage(indexMovies,:)= numberMotivesEachStage;
     allTypesOfMotivesEachStage = [allTypesOfMotivesEachStage;typesOfMotivesEachStage];
     
-    %%Mitosis
-%     fileNameMitosis=mitosisFiles(indexMovies,1).name;
-%     [numberMitosis,numberMitosisEachStage,typesOfMitosis,stdTypesOfMitosis,typesOfMitosisEachStage] = classifyMotives(eval(fileNameMitosis));
-% 
-%     allTypesMitosis = [allTypesMitosis; typesOfMitosis];
-%     allStdTypesMitosis = [allStdTypesMotives; stdTypesOfMitosis];
-%     
-%     allNumberMitosis(indexMovies,:)=numberMotives;
-% 
-%     allNumberMitosisEachStage(indexMovies,:)= numberMotivesEachStage;
-%     allTypesOfMitosisEachStage = [allTypesOfMitosisEachStage;typesOfMitosisEachStage];
-%     
-%     [allAfterTopology]=extractTopologyMitosis(embryoMovies,indxAfter)
-% %   allTopologyMitosis(indexMovies,:) = allAfterTopology;
+    if checkFile
+       [allAfterTopology] = extractTopologyMitosis(eval(fileNameMotives),indxAfter);
+       allTopologyMitosis(indexMovies,:) = allAfterTopology;
+    end
+    
 end 
 
 [afterMotives,beforeMotives,interMotives,indepMotives] = splitTypesOfMotives(allTypesMotives);
@@ -57,7 +42,8 @@ end
 [afterMotivesEachStage,beforeMotivesEachStage,interMotivesEachStage,indepMotivesEachStage] = splitTypesOfMotives(allTypesOfMotivesEachStage);
 allNumberMotivesNormalized = allNumberMotives./sum(allNumberMotives,2);
 
-allIntercalationsData = table(allNumberMotives,allNumberMotivesNormalized, allNumberMotivesEachStage, afterMotives,beforeMotives,interMotives,indepMotives,stdAfterMotives,stdBeforeMotives,stdInterMotives,stdIndepMotives,afterMotivesEachStage,beforeMotivesEachStage,interMotivesEachStage,indepMotivesEachStage);
-% allMitosisData = table(allTypesMitosis, allStdTypesOfMitosis, allNumberMitosis, allTypesOfMitosisEachStage,allNumberMitosisEachStage,allTopologyMitosis);
-
+allMotivesData = table(allNumberMotives,allNumberMotivesNormalized, allNumberMotivesEachStage, afterMotives,beforeMotives,interMotives,indepMotives,stdAfterMotives,stdBeforeMotives,stdInterMotives,stdIndepMotives,afterMotivesEachStage,beforeMotivesEachStage,interMotivesEachStage,indepMotivesEachStage);
+    if checkFile
+        allMotivesData = [allMotivesData,table(allTopologyMitosis)];
+    end
 end
