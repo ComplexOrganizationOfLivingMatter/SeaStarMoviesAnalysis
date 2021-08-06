@@ -1,7 +1,7 @@
 function [numberMotives,numberMotivesEachStage,meanAllTypesOfMotives,stdAllTypesOfMotives,allTypesOfMotivesEachStage,indxAfter] = classifyMotives(embryoMovies,mitosisFile)
 %   Detailed explanation goes here
 
-threshold=0.25;
+threshold=0.2;
 
 if mitosisFile==1
     indxAfter=find((embryoMovies(:,1) > threshold | isnan(embryoMovies(:,1))) & embryoMovies(:,3) <= threshold);
