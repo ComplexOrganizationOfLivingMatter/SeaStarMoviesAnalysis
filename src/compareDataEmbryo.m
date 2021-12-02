@@ -25,17 +25,17 @@ timeMiniatas=[timeMiniatasAfter.p timeMiniatasBefore.p timeMiniatasInter.p timeM
 
 timeMiniataPictusAfter=compareMeansOfMatrices(embryoDataFiles(1).intercalations.afterMotives,embryoDataFiles(3).intercalations.afterMotives);
 timeMiniataPictusBefore=compareMeansOfMatrices(embryoDataFiles(1).intercalations.beforeMotives,embryoDataFiles(3).intercalations.beforeMotives);
-% timeMiniataPictusInter=compareMeansOfMatrices(embryoDataFiles(1).intercalations.interMotives,embryoDataFiles(3).intercalations.interMotives);
+timeMiniataPictusInter=compareMeansOfMatrices(embryoDataFiles(1).intercalations.interMotives,embryoDataFiles(3).intercalations.interMotives);
 timeMiniataPictusIndep=compareMeansOfMatrices(embryoDataFiles(1).intercalations.indepMotives,embryoDataFiles(3).intercalations.indepMotives);
 
-timeMiniataPictus=[timeMiniataPictusAfter.p timeMiniataPictusBefore.p timeMiniataPictusIndep.p];
+timeMiniataPictus=[timeMiniataPictusAfter.p timeMiniataPictusBefore.p timeMiniataPictusInter.p timeMiniataPictusIndep.p];
 
 timeMiniataCompPictusAfter=compareMeansOfMatrices(embryoDataFiles(2).intercalations.afterMotives,embryoDataFiles(3).intercalations.afterMotives);
 timeMiniataCompPictusBefore=compareMeansOfMatrices(embryoDataFiles(2).intercalations.beforeMotives,embryoDataFiles(3).intercalations.beforeMotives);
-% timeMiniataCompPictusInter=compareMeansOfMatrices(embryoDataFiles(2).intercalations.interMotives,embryoDataFiles(3).intercalations.interMotives);
+timeMiniataCompPictusInter=compareMeansOfMatrices(embryoDataFiles(2).intercalations.interMotives,embryoDataFiles(3).intercalations.interMotives);
 timeMiniataCompPictusIndep=compareMeansOfMatrices(embryoDataFiles(2).intercalations.indepMotives,embryoDataFiles(3).intercalations.indepMotives);
 
-timeMiniataCompPictus=[timeMiniataCompPictusAfter.p timeMiniataCompPictusBefore.p timeMiniataCompPictusIndep.p];
+timeMiniataCompPictus=[timeMiniataCompPictusAfter.p timeMiniataCompPictusBefore.p timeMiniataCompPictusInter.p timeMiniataCompPictusIndep.p];
 
 interphaseStageName=["PostMito" "Intercalation" "PreMito"]';
 
@@ -78,23 +78,23 @@ tableStatsMitosis.Properties.VariableNames={char("TypeOfMitosis"),char("MiniataV
 mitosisMiniatasAfter=compareMeansOfMatrices(embryoDataFiles(1).mitosis.afterMotives(:,2:end),embryoDataFiles(2).mitosis.afterMotives(:,2:end));
 mitosisMiniatasBefore=compareMeansOfMatrices(embryoDataFiles(1).mitosis.beforeMotives(:,1:2),embryoDataFiles(2).mitosis.beforeMotives(:,1:2));
 mitosisMiniatasBefAft=compareMeansOfMatrices(embryoDataFiles(1).mitosis.interMotives,embryoDataFiles(2).mitosis.interMotives);
-% mitosisMiniatasIndep=compareMeansOfMatrices(embryoDataFiles(1).mitosis.indepMotives,embryoDataFiles(2).mitosis.indepMotives);
+mitosisMiniatasIndep=compareMeansOfMatrices(embryoDataFiles(1).mitosis.indepMotives,embryoDataFiles(2).mitosis.indepMotives);
 
-mitosisMiniatas=[vertcat(NaN,mitosisMiniatasAfter.p) vertcat(mitosisMiniatasBefore.p,NaN) mitosisMiniatasBefAft.p ];
+mitosisMiniatas=[vertcat(NaN,mitosisMiniatasAfter.p) vertcat(mitosisMiniatasBefore.p,NaN) mitosisMiniatasBefAft.p vertcat(NaN,mitosisMiniatasIndep.p(2),NaN)];
 
 mitosisMiniataPictusAfter=compareMeansOfMatrices(embryoDataFiles(1).mitosis.afterMotives(:,2:end),embryoDataFiles(3).mitosis.afterMotives(:,2:end));
 mitosisMiniataPictusBefore=compareMeansOfMatrices(embryoDataFiles(1).mitosis.beforeMotives(:,1:2),embryoDataFiles(3).mitosis.beforeMotives(:,1:2));
-% mitosisMiniataPictusInter=compareMeansOfMatrices(embryoDataFiles(1).mitosis.interMotives,embryoDataFiles(3).mitosis.interMotives);
-% mitosisMiniataPictusIndep=compareMeansOfMatrices(embryoDataFiles(1).mitosis.indepMotives,embryoDataFiles(3).mitosis.indepMotives);
+mitosisMiniataPictusBeftAft=compareMeansOfMatrices(embryoDataFiles(1).mitosis.interMotives,embryoDataFiles(3).mitosis.interMotives);
+mitosisMiniataPictusIndep=compareMeansOfMatrices(embryoDataFiles(1).mitosis.indepMotives,embryoDataFiles(3).mitosis.indepMotives);
 
-mitosisMiniataPictus=[vertcat(NaN,mitosisMiniataPictusAfter.p)  vertcat(mitosisMiniataPictusBefore.p,NaN) vertcat(NaN,NaN,NaN)];
+mitosisMiniataPictus=[vertcat(NaN,mitosisMiniataPictusAfter.p)  vertcat(mitosisMiniataPictusBefore.p,NaN) mitosisMiniataPictusBeftAft.p vertcat(NaN,mitosisMiniataPictusIndep.p(2),NaN)];
 
 mitosisMiniataCompPictusAfter=compareMeansOfMatrices(embryoDataFiles(2).mitosis.afterMotives(:,2:end),embryoDataFiles(3).mitosis.afterMotives(:,2:end));
 mitosisMiniataCompPictusBefore=compareMeansOfMatrices(embryoDataFiles(2).mitosis.beforeMotives(:,1:2),embryoDataFiles(3).mitosis.beforeMotives(:,1:2));
-% mitosisMiniataCompPictusInter=compareMeansOfMatrices(embryoDataFiles(2).mitosis.interMotives,embryoDataFiles(3).mitosis.interMotives);
-% mitosisMiniataCompPictusIndep=compareMeansOfMatrices(embryoDataFiles(2).mitosis.indepMotives,embryoDataFiles(3).mitosis.indepMotives);
+mitosisMiniataCompPictusBeftAft=compareMeansOfMatrices(embryoDataFiles(2).mitosis.interMotives,embryoDataFiles(3).mitosis.interMotives);
+mitosisMiniataCompPictusIndep=compareMeansOfMatrices(embryoDataFiles(2).mitosis.indepMotives,embryoDataFiles(3).mitosis.indepMotives);
 
-mitosisMiniataCompPictus=[vertcat(NaN,mitosisMiniataCompPictusAfter.p) vertcat(mitosisMiniataCompPictusBefore.p,NaN) vertcat(NaN,NaN,NaN)];
+mitosisMiniataCompPictus=[vertcat(NaN,mitosisMiniataCompPictusAfter.p) vertcat(mitosisMiniataCompPictusBefore.p,NaN) mitosisMiniataCompPictusBeftAft.p vertcat(NaN,mitosisMiniataCompPictusIndep.p(2),NaN)];
 
 mitosisStageName=["PreMito" "Mito" "PostMito"]';
 
@@ -106,8 +106,8 @@ tableStatsMitosisMiniatasEachStage=compareMeansOfMatrices(embryoDataFiles(1).mit
 tableStatsMitosisMiniataCompPictusEachStage=compareMeansOfMatrices(embryoDataFiles(2).mitosis.allNumberMotivesEachStage,embryoDataFiles(3).mitosis.allNumberMotivesEachStage);
 tableStatsMitosisMiniataPictusEachStage=compareMeansOfMatrices(embryoDataFiles(1).mitosis.allNumberMotivesEachStage,embryoDataFiles(3).mitosis.allNumberMotivesEachStage);
 mitosisEachStageName=["128 cells" "256 cells" "512 cells" "1024 cells" "2048 cells" "4096 cells"]';
-tableStatsMitosisTemporalDist= table(mitosisEachStageName,tableStatsMiniatasEachStage{:,2},tableStatsMiniataPictusEachStage{:,2},tableStatsMiniataCompPictusEachStage{:,2});
-tableStatsMitosisTemporalDist.Properties.VariableNames={char("TypeOfIntercalationEachStage"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"),char("MiniataCompVsPictus")};
+tableStatsMitosisTemporalDist= table(mitosisEachStageName,tableStatsMitosisMiniatasEachStage{:,2},tableStatsMitosisMiniataPictusEachStage{:,2},tableStatsMitosisMiniataCompPictusEachStage{:,2});
+tableStatsMitosisTemporalDist.Properties.VariableNames={char("TypeOfMitosisEachStage"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"),char("MiniataCompVsPictus")};
 
 
 temporalDistTypeMitosisMiniata = [embryoDataFiles(1).mitosis.afterMotivesEachStage embryoDataFiles(1).mitosis.beforeMotivesEachStage embryoDataFiles(1).mitosis.interMotivesEachStage embryoDataFiles(1).mitosis.indepMotivesEachStage];
@@ -131,6 +131,7 @@ topologyMiniataCompPictus = compareMeansOfMatrices(table2array(embryoDataFiles(2
 topologyName=["2 prog" "3A prog" "3B prog" "4 prog" "incomplete mitosis"]';
 
 tableStatsTopology =  table(topologyName,topologyMiniatas.p,topologyMiniataPictus.p,topologyMiniataCompPictus.p);
+tableStatsTopology.Properties.VariableNames={char("NumberOfProgenitors"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"),char("MiniataCompVsPictus")};
 
 allTableStatsIntercalations = {tableStatsIntercalations,tableStatsTimeIntervals,tableStatsTemporalDist,tableStatsTemporalDistTypeMotives};
 allTableStatsMitosis = {tableStatsMitosis,tableStatsMitosisTimeIntervals,tableStatsMitosisTemporalDist,tableStatsTemporalDistTypeMitosis,tableStatsTopology};
