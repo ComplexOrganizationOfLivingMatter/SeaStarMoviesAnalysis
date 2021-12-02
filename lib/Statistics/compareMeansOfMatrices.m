@@ -10,7 +10,7 @@ function tableStats = compareMeansOfMatrices(m1,m2)
 %We employed a two?tailed Student's t ?test to compare the means in the cases
 %where both distribution and variance of the two sets of data were similar
 tableStats=table('Size',[size(m1,2),2],'VariableTypes',{'string','double'},'VariableNames',{'algorithm','p'});
-    
+try
     for i=1:size(m1,2)
         
         feature1=m1(:,i);
@@ -78,6 +78,8 @@ tableStats=table('Size',[size(m1,2),2],'VariableTypes',{'string','double'},'Vari
         tableStats.algorithm(i)=nameAlgo;
         tableStats.p(i)=p_ouput;
     end
-
+catch
+    
+end
 
 end
