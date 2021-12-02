@@ -1,4 +1,4 @@
-
+*.txt
 *.tif
 *.asv
 *.mat
@@ -6,3 +6,4 @@
 *.JPG
 *.xls
 *.zip
+*.pptx
