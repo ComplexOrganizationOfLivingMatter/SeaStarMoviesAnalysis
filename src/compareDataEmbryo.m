@@ -124,18 +124,29 @@ tableStatsTemporalDistTypeMitosis.Properties.VariableNames={char("TypeOfMitosisE
 
 
 %% Topology Analysis
-topologyMiniatas = compareMeansOfMatrices(table2array(embryoDataFiles(1).mitosis(:,end)),table2array(embryoDataFiles(2).mitosis(:,end)));
-topologyMiniataPictus = compareMeansOfMatrices(table2array(embryoDataFiles(1).mitosis(:,end)),table2array(embryoDataFiles(3).mitosis(:,end)));
-topologyMiniataCompPictus = compareMeansOfMatrices(table2array(embryoDataFiles(2).mitosis(:,end)),table2array(embryoDataFiles(3).mitosis(:,end)));
+
+
+topologyMiniatas = compareMeansOfMatrices(embryoDataFiles(1).mitosis.allAfterTopologyMitosis,embryoDataFiles(2).mitosis.allAfterTopologyMitosis);
+topologyMiniataPictus = compareMeansOfMatrices(embryoDataFiles(1).mitosis.allAfterTopologyMitosis,embryoDataFiles(3).mitosis.allAfterTopologyMitosis);
+topologyMiniataCompPictus = compareMeansOfMatrices(embryoDataFiles(2).mitosis.allAfterTopologyMitosis,embryoDataFiles(3).mitosis.allAfterTopologyMitosis);
 
 topologyName=["2 prog" "3A prog" "3B prog" "4 prog" "incomplete mitosis"]';
 
 tableStatsTopology =  table(topologyName,topologyMiniatas.p,topologyMiniataPictus.p,topologyMiniataCompPictus.p);
 tableStatsTopology.Properties.VariableNames={char("NumberOfProgenitors"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"),char("MiniataCompVsPictus")};
 
+topologyMiniatas2 = compareMeansOfMatrices(embryoDataFiles(1).mitosis.allBeforeAfterTopologyMitosis,embryoDataFiles(2).mitosis.allBeforeAfterTopologyMitosis);
+topologyMiniataPictus2 = compareMeansOfMatrices(embryoDataFiles(1).mitosis.allBeforeAfterTopologyMitosis,embryoDataFiles(3).mitosis.allBeforeAfterTopologyMitosis);
+topologyMiniataCompPictus2 = compareMeansOfMatrices(embryoDataFiles(2).mitosis.allBeforeAfterTopologyMitosis,embryoDataFiles(3).mitosis.allBeforeAfterTopologyMitosis);
+
+tableStatsTopology2 =  table(topologyName,topologyMiniatas2.p,topologyMiniataPictus2.p,topologyMiniataCompPictus2.p);
+tableStatsTopology.Properties.VariableNames={char("NumberOfProgenitors"),char("MiniataVsMiniataComp"), char("MiniataVsPictus"),char("MiniataCompVsPictus")};
+
 allTableStatsIntercalations = {tableStatsIntercalations,tableStatsTimeIntervals,tableStatsTemporalDist,tableStatsTemporalDistTypeMotives};
-allTableStatsMitosis = {tableStatsMitosis,tableStatsMitosisTimeIntervals,tableStatsMitosisTemporalDist,tableStatsTemporalDistTypeMitosis,tableStatsTopology};
+allTableStatsMitosis = {tableStatsMitosis,tableStatsMitosisTimeIntervals,tableStatsMitosisTemporalDist,tableStatsTemporalDistTypeMitosis,tableStatsTopology,tableStatsTopology2};
+    
 
 
+
+    
 end
-
