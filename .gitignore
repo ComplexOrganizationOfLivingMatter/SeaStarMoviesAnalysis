@@ -4,6 +4,8 @@
 *.mat
 *.png
 *.JPG
-*.xls
+*.xlsx
 *.zip
 *.pptx
+*.xls
+*.docx
