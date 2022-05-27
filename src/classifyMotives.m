@@ -1,7 +1,7 @@
-function [numberMotives,numberMotivesEachStage,meanAllTypesOfMotives,stdAllTypesOfMotives,allTypesOfMotivesEachStage,indxAfter] = classifyMotives(embryoMovies,mitosisFile)
+function [numberMotives,numberMotivesEachStage,meanAllTypesOfMotives,stdAllTypesOfMotives,allTypesOfMotivesEachStage,allIndxs] = classifyMotives(embryoMovies,mitosisFile)
 %   Detailed explanation goes here
 
-threshold=0.2;
+threshold=0.15;
 
 if mitosisFile==1
     indxAfter=find((embryoMovies(:,1) > threshold | isnan(embryoMovies(:,1))) & embryoMovies(:,3) <= threshold);
@@ -31,6 +31,7 @@ numberMotives=[size(embryoMovies(indxAfter,:),1);size(embryoMovies(indxBefore,:)
 %% Temporal distribution
 allIndxs = table({indxAfter}, {indxBefore},{indxAllInterphase}, {indxIndependent});
 allIndxs.Properties.VariableNames={char("After"),char("Before"), char("AllInterphase"),char("Independent")};
+
 
 [numberMotivesEachStage,allTypesOfMotivesEachStage] = classifyTemporalDistribution(allIndxs,embryoMovies);
 
